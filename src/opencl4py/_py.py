@@ -347,7 +347,7 @@ class Queue(CL):
         if global_offset is None:
             global_work_offset = cl.ffi.NULL
         else:
-            if len(global_work_offset) != n_dims:
+            if len(global_offset) != n_dims:
                 raise ValueError("global_offset should be the same length "
                                  "as global_size")
             global_work_offset = cl.ffi.new("size_t[]", n_dims)
