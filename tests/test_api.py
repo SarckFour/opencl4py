@@ -805,7 +805,7 @@ class Test(unittest.TestCase):
         if ctx.devices[0].version < 2.0:
             return
         svm = ctx.svm_alloc(cl.CL_MEM_READ_WRITE, 4096)
-        svm.release()
+        svm._release()
         self.assertIsNone(svm.handle)
         del svm
         svm = ctx.svm_alloc(cl.CL_MEM_READ_WRITE, 4096)
