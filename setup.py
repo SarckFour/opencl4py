@@ -31,6 +31,7 @@ either expressed or implied, of Samsung Electronics Co.,Ltd..
 opencl4py - OpenCL cffi bindings and helper classes.
 URL: https://github.com/Samsung/opencl4py
 Original author: Alexey Kazantsev <a.kazantsev@samsung.com>
+Alterations author: Andrey Ivanko <sarck.four@gmail.com>
 """
 
 """
@@ -43,28 +44,25 @@ except ImportError:
 
 
 setup(
-    name="opencl4py",
-    description="OpenCL cffi bindings and helper classes",
-    version="1.5.2",
+    name="purecl",
+    description="OpenCL cffi bindings, based on opencl4py library",
+    version="0.1",
     license="Simplified BSD",
-    author="Samsung Electronics Co.,Ltd.",
-    author_email="a.kazantsev@samsung.com",
-    url="https://github.com/Samsung/opencl4py",
-    download_url="https://github.com/Samsung/opencl4py",
-    packages=["opencl4py", "opencl4py.blas"],
+    author="Samsung Electronics Co.,Ltd., Andrey Ivanko",
+    author_email="sarck.four@gmail.com, a.kazantsev@samsung.com",
+    url="https://github.com/SarckFour/purecl",
+    download_url="https://github.com/SarckFour/purecl",
+    packages=["purecl", "purecl.blas", "purecl.common"],
     install_requires=["cffi"],
-    package_dir={"opencl4py": "src/opencl4py"},
-    keywords=["OpenCL", "clBLAS", "opencl4py"],
+    package_dir={"purecl": "src/purecl"},
+    keywords=["OpenCL", "purecl", "opencl4py"],
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 3 - Alpha",
         "Environment :: Console",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: BSD License",
         "Operating System :: POSIX",
-        "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3.2",
-        "Programming Language :: Python :: 3.3",
-        "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3.7",
         "Topic :: Software Development :: Libraries"
     ]
 )
