@@ -29,7 +29,7 @@ either expressed or implied, of Samsung Electronics Co.,Ltd..
 
 """
 opencl4py - OpenCL cffi bindings and helper classes.
-URL: https://github.com/Samsung/opencl4py
+URL: https://github.com/SarckFour/purecl
 Original author: Alexey Kazantsev <a.kazantsev@samsung.com>
 Alterations author: Andrey Ivanko <sarck.four@gmail.com>
 """
