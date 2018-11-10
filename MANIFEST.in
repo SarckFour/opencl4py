@@ -1,5 +1,6 @@
-include src/opencl4py/*.*
-include src/opencl4py/blas/*.*
+include src/purecl/*.*
+include src/purecl/blas/*.*
+include src/purecl/common/*.*
 include tests/*.py
 include tests/*.cl
 include LICENSE

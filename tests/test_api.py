@@ -38,7 +38,7 @@ Tests some of the api in opencl4py package.
 """
 import gc
 import logging
-import opencl4py as cl
+import purecl as cl
 import os
 import unittest
 
