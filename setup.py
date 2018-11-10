@@ -53,7 +53,7 @@ setup(
     url="https://github.com/SarckFour/purecl",
     download_url="https://github.com/SarckFour/purecl",
     packages=["purecl", "purecl.blas", "purecl.common"],
-    install_requires=["cffi"],
+    install_requires=["cffi>=1"],
     package_dir={"purecl": "src/purecl"},
     keywords=["OpenCL", "purecl", "opencl4py"],
     classifiers=[
