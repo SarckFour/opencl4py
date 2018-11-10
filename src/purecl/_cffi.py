@@ -28,9 +28,8 @@ either expressed or implied, of Samsung Electronics Co.,Ltd..
 """
 
 """
-opencl4py - OpenCL cffi bindings and helper classes.
-URL: https://github.com/Samsung/opencl4py
 Original author: Alexey Kazantsev <a.kazantsev@samsung.com>
+Alterations author: Andrey Ivanko <sarck.four@gmail.com>
 """
 
 """
@@ -39,15 +38,13 @@ OpenCL cffi bindings.
 
 import cffi
 import threading
+#don't trust IDE
 from purecl.common.const import *
 
-#: ffi parser
 ffi = None
-
-#: Loaded shared library
 lib = None
+event_callback = None
 
-#: Lock
 lock = threading.Lock()
 
 
@@ -63,6 +60,15 @@ def _initialize(backends):
     global ffi
     ffi = cffi.FFI()
     ffi.cdef(src)
+
+    @ffi.callback("void*(cl_event, cl_int, void*)")
+    def global_event_callback(event, status, data):
+        import purecl._py as seed
+        ev_obj = seed.Event.wait_callbacks.pop(event.__hash__())
+        ev_obj.callback(status, data, ffi, lib)
+
+    global event_callback
+    event_callback = global_event_callback
 
     # Load library
     for libnme in backends:

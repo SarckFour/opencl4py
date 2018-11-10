@@ -16,6 +16,7 @@ typedef int32_t cl_int;
     typedef uint32_t cl_profiling_info;
     typedef uint32_t cl_buffer_create_type;
     typedef uint64_t cl_svm_mem_flags;
+    typedef uint32_t cl_event_info;
 
     typedef void* cl_platform_id;
     typedef void* cl_device_id;
@@ -269,3 +270,22 @@ typedef int32_t cl_int;
                                cl_uint num_events_in_wait_list,
                                const cl_event *event_wait_list,
                                cl_event *event);
+
+    cl_event clCreateUserEvent (cl_context context,
+ 	                            cl_int *errcode_ret);
+
+ 	cl_int clSetUserEventStatus (cl_event event,
+ 	                             cl_int execution_status);
+
+ 	cl_int clGetEventInfo(cl_event event,
+ 	                      cl_event_info param_name,
+ 	                      size_t param_value_size,
+ 	                      void *param_value,
+ 	                      size_t *param_value_size_ret);
+
+    cl_int clRetainEvent(cl_event event);
+
+    cl_int clSetEventCallback(cl_event event,
+ 	                          cl_int command_exec_callback_type,
+ 	                          void *pfn_event_notify,
+ 	                          void *user_data);
