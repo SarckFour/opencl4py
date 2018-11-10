@@ -64,5 +64,6 @@ setup(
         "Operating System :: POSIX",
         "Programming Language :: Python :: 3.7",
         "Topic :: Software Development :: Libraries"
-    ]
+    ],
+    include_package_data=True
 )
