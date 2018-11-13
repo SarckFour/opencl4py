@@ -44,6 +44,7 @@ class CLRuntimeError(RuntimeError):
         super(CLRuntimeError, self).__init__(msg)
         self.code = code
 
+    # todo Cpython only
     @staticmethod
     def check(errcode, _raise=True, name=None):
         if errcode:
@@ -54,9 +55,10 @@ class CLRuntimeError(RuntimeError):
                 raise CLRuntimeError(
                     "%s() failed with "
                     "error %s" % (name,
-                                 CL.get_error_description(errcode)),
+                                  CL.get_error_description(errcode)),
                     errcode)
-            else: return True
+            else:
+                return True
         else:
             return False
 
@@ -144,7 +146,6 @@ class Event(CL):
         super(Event, self).__init__()
         self._handle = handle
 
-
     @staticmethod
     def wait_multi(wait_for, lib=cl.lib):
         """Wait on list of Event objects.
@@ -199,7 +200,7 @@ class Event(CL):
         CLRuntimeError.check(res[0])
 
     def get_event_info(self):
-        #todo evade troubles with definition
+        # todo evade troubles with definition
         ev_inf = cl.ffi.new("cl_event_info")
         pvs = cl.ffi.new("size_t[]", 1)
         pv = cl.ffi.new("void *")
@@ -212,9 +213,9 @@ class Event(CL):
         res = self._lib.clRetainEvent(self.handle)
         CLRuntimeError.check(res[0])
 
-    def set_event_callback(self, status, user_data = None):
+    def set_event_callback(self, status, user_data=None):
         if user_data is None:
-            user_data=cl.ffi.NULL
+            user_data = cl.ffi.NULL
         res = self._lib.clSetEventCallback(self.handle,
                                            status,
                                            cl.event_callback,
@@ -247,6 +248,7 @@ class Queue(CL):
         context: context associated with this queue.
         device: device associated with this queue.
     """
+
     def __init__(self, context, device, flags, properties=None):
         """Creates the OpenCL command queue associated with the given device.
 
@@ -682,6 +684,7 @@ class Buffer(CL):
                  http://bugs.python.org/issue23720
                  (weakrefs do not help here).
     """
+
     def __init__(self, context, flags, host_array, size=None,
                  parent=None, origin=0):
         super(Buffer, self).__init__()
@@ -712,7 +715,7 @@ class Buffer(CL):
             self._handle = None
             CLRuntimeError.check(err[0], True,
                                  "clCreateBuffer()" if parent is None
-                                else "clCreateSubBuffer")
+                                 else "clCreateSubBuffer")
 
     def _add_ref(self, obj):
         self._n_refs += 1
@@ -792,6 +795,7 @@ class skip(object):
     Passing in the class type makes set_args to skip setting one argument;
     passing skip(n) makes set_args skip n arguments.
     """
+
     def __init__(self, number):
         self.number = number
 
@@ -809,6 +813,7 @@ class skip(object):
 class WorkGroupInfo(CL):
     """Some information about the kernel concerning the specified device.
     """
+
     def __init__(self, kernel, device):
         super(WorkGroupInfo, self).__init__()
         self._kernel = kernel
@@ -1269,6 +1274,7 @@ class Pipe(CL):
         max_packets: maximum number of packets the pipe can hold
                      (must be greater than 0).
     """
+
     def __init__(self, context, flags, packet_size, max_packets):
         super(Pipe, self).__init__()
         context._add_ref(self)
@@ -1322,6 +1328,7 @@ class SVM(CL):
         size: size in bytes of the SVM buffer to be allocated.
         alignment: the minimum alignment in bytes (can be 0).
     """
+
     def __init__(self, context, flags, size, alignment=0):
         super(SVM, self).__init__()
         context._add_ref(self)
@@ -1384,6 +1391,7 @@ class Context(CL):
                  http://bugs.python.org/issue23720
                  (weakrefs do not help here).
     """
+
     def __init__(self, platform, devices):
         super(Context, self).__init__()
         self._n_refs = 1
@@ -1535,6 +1543,7 @@ class Device(CL):
         memsize: global memory size of the device.
         memalign: align in bytes, required for clMapBuffer.
     """
+
     def __init__(self, handle, platform, path):
         super(Device, self).__init__()
         self._handle = handle
@@ -1822,13 +1831,13 @@ class Device(CL):
     def built_in_kernels(self):
         return [kernel.strip() for kernel in self._get_device_info_str(
             cl.CL_DEVICE_BUILT_IN_KERNELS).split(';')
-            if kernel.strip()]
+                if kernel.strip()]
 
     @property
     def extensions(self):
         return [ext.strip() for ext in self._get_device_info_str(
             cl.CL_DEVICE_EXTENSIONS).split(' ')
-            if ext.strip()]
+                if ext.strip()]
 
     @property
     def profile(self):
@@ -1915,6 +1924,7 @@ class Platform(CL):
         name: OpenCL name of the platform.
         path: opencl4py platform identifier.
     """
+
     def __init__(self, handle, path):
         super(Platform, self).__init__()
         self._handle = handle
@@ -1984,6 +1994,7 @@ class Platforms(CL):
     Attributes:
         platforms: list of Platform objects.
     """
+
     def __init__(self):
         cl.initialize()
         super(Platforms, self).__init__()
