@@ -224,9 +224,9 @@ class Event(CL):
             Event.wait_callbacks.update(
                 {self.handle.__hash__(): self})
 
-    def callback(self, status, data, _ffi, _lib):
+    def callback(self, tuple_data):
         # for redefine
-        pass
+        raise RuntimeError("Callback %s is not realized" % self)
 
     def _release(self):
         if self.handle is not None:

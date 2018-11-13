@@ -65,7 +65,7 @@ def _initialize(backends):
     def global_event_callback(event, status, data):
         import purecl._py as seed
         ev_obj = seed.Event.wait_callbacks.pop(event.__hash__())
-        ev_obj.callback(status, data, ffi, lib)
+        ev_obj.callback((event, status, data, ffi, lib))
 
     global event_callback
     event_callback = global_event_callback
