@@ -289,9 +289,12 @@ class Queue(CL):
                  param_val=cl.ffi.NULL,
                  param_val_size_ret=cl.ffi.NULL):
 
-
         res = self._lib.clGetCommandQueueInfo(self.handle,
-                                              )
+                                              param_val_size,
+                                              param_val,
+                                              param_val_size_ret)
+        CLRuntimeError.check(res)
+        return param, param_val_size, param_val, param_val_size_ret,
 
     @property
     def context(self):
