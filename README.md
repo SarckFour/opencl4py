@@ -1,7 +1,7 @@
 purecl
 =========
 
-Python cffi OpenCL bindings, based on opencl4py library.
+Python cffi OpenCL 2.0 bindings, based on opencl4py library.
 
 Full description: Events
 
