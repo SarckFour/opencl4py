@@ -9,7 +9,7 @@ typedef int32_t cl_int;
     typedef cl_uint  cl_kernel_info;
     typedef uint32_t cl_kernel_work_group_info;
     typedef uint32_t cl_command_queue_properties;
-    typedef uint32_t cl_command_queue_info
+    typedef uint32_t cl_command_queue_info;
     typedef uint64_t cl_queue_properties;
     typedef uint64_t cl_mem_flags;
     typedef uint32_t cl_bool;
@@ -292,7 +292,7 @@ typedef int32_t cl_int;
  	                          void *user_data);
 
  	cl_int clGetCommandQueueInfo   (cl_command_queue command_queue,
- 	                                cl_command_queue_info  param_name ,
+ 	                                cl_command_queue_info param_name,
  	                                size_t  param_value_size ,
  	                                void  *param_value ,
  	                                size_t  *param_value_size_ret );
