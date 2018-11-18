@@ -285,9 +285,16 @@ class Queue(CL):
             CLRuntimeError.check(err[0], True, fnme)
 
     def get_info(self, param,
-                 param_val_size=cl.ffi.NULL,
-                 param_val=cl.ffi.NULL,
-                 param_val_size_ret=cl.ffi.NULL):
+                 param_val_size=None,
+                 param_val=None,
+                 param_val_size_ret=None):
+
+        if param_val_size is None:
+            param_val_sise = cl.ffi.NULL
+        if param_val is None:
+            param_val = cl.ffi.NULL
+        if param_val_size_ret is None:
+            param_val_size_ret = cl.ffi.NULL
 
         res = self._lib.clGetCommandQueueInfo(self.handle,
                                               param_val_size,
