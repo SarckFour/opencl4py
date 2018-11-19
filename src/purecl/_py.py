@@ -714,7 +714,7 @@ class Buffer(CL):
             parent._add_ref(self)
         self._context = context
         self._flags = flags
-        self._host_array = (host_array if flags & cl.CL_MEM_ALLOC_HOST_PTR == 0
+        self._host_array = (host_array if flags & cl.CL_MEM_USE_HOST_PTR != 0
                             else None)
         host_ptr, size = CL.extract_ptr_and_size(host_array, size)
         self._size = size
