@@ -320,7 +320,7 @@ class Queue(CL):
         return self._device
 
     def execute_kernel(self, kernel, global_size, local_size,
-                       global_offset=None, wait_for=None, need_event=True):
+                       global_offset=None, wait_for=None, need_event=True, external_event=None):
         """Executes OpenCL kernel (calls clEnqueueNDRangeKernel).
 
         Parameters:
@@ -330,11 +330,17 @@ class Queue(CL):
             global_offset: global offset.
             wait_for: list of the Event objects to wait.
             need_event: return Event object or not.
+            external_event: externally created event for indentifying kernel
 
         Returns:
             Event object or None if need_event == False.
         """
-        event = cl.ffi.new("cl_event[]", 1) if need_event else cl.ffi.NULL
+        event = cl.ffi.new("cl_event[]", 1)
+        if external_event is not None:
+            event[0] = external_event.handle
+        elif not need_event:
+            event = cl.ffi.NULL
+
         wait_list, n_events = CL.get_wait_list(wait_for)
         n_dims = len(global_size)
         global_work_size = cl.ffi.new("size_t[]", n_dims)
