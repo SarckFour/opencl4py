@@ -111,7 +111,7 @@ class CL(object):
         else:
             n_events = 0
             wait_list = cl.ffi.NULL
-        return (wait_list, n_events)
+        return wait_list, n_events
 
     @staticmethod
     def get_error_name_from_code(code):
@@ -216,13 +216,15 @@ class Event(CL):
     def set_event_callback(self, status, user_data=None):
         if user_data is None:
             user_data = cl.ffi.NULL
+
+        Event.wait_callbacks.update(
+            {self.handle.__hash__(): self})
         res = self._lib.clSetEventCallback(self.handle,
                                            status,
                                            cl.event_callback,
                                            user_data)
-        if not CLRuntimeError.check(res[0]):
-            Event.wait_callbacks.update(
-                {self.handle.__hash__(): self})
+        CLRuntimeError.check(res[0])
+
 
     def callback(self, tuple_data):
         # for redefine
