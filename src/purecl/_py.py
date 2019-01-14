@@ -2078,7 +2078,8 @@ class Platforms(CL):
 
         Else chooses first platform and device.
         """
-        if len(self.platforms) == 1 and len(self.platforms[0].devices) == 1:
+        if platform_describe is None and (len(self.platforms) == 1 and
+                len(self.platforms[0].devices) == 1):
             return self.platforms[0].create_context(self.platforms[0].devices,
                                                     create_debugger)
         import os
