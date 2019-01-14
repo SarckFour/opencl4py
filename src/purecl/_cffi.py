@@ -44,6 +44,9 @@ from purecl.common.const import *
 ffi = None
 lib = None
 event_callback = None
+build_callback = None
+runtime_callback = None
+
 
 lock = threading.Lock()
 
@@ -68,8 +71,27 @@ def _initialize(backends):
         ev_obj.callback((event, status, data, ffi, lib))
         return event
 
+    @ffi.callback("void*(cl_program, void*)")
+    def global_build_callback(program, data):
+        raise Exception("OpenCL BUILD ERROR:\n Program:\n%s\n\nData:\n%s" % (program, data))
+
+    @ffi.callback("void*(const char*, const void*, size_t, void*)")
+    def global_runtime_callback(errinfo, pricate_info, cb, data):
+        raise Exception("OpenCL RUNTIME ERROR:\n "
+                        "errinfo:\n%s\n"
+                        "pricate_info:\n%s\n"
+                        "CB: %s\n"
+                        "Data: %s"
+                        % (errinfo, pricate_info, cb, data))
+
     global event_callback
     event_callback = global_event_callback
+
+    global build_callback
+    build_callback = global_build_callback
+
+    global runtime_callback
+    runtime_callback = global_runtime_callback
 
     # Load library
     for libnme in backends:

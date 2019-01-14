@@ -225,7 +225,6 @@ class Event(CL):
                                            user_data)
         CLRuntimeError.check(res[0])
 
-
     def callback(self, tuple_data):
         # for redefine
         raise RuntimeError("Callback %s is not realized" % self)
@@ -1081,7 +1080,7 @@ class Program(CL):
     """
 
     def __init__(self, context, devices, src, include_dirs=(), options="",
-                 binary=False):
+                 binary=False, create_debugger=False):
         super(Program, self).__init__()
         context._add_ref(self)
         self._context = context
@@ -1091,7 +1090,7 @@ class Program(CL):
         self._options = options.strip().encode("utf-8")
         self._build_logs = []
         if not binary:
-            self._create_program_from_source()
+            self._create_program_from_source(create_debugger)
         else:
             self._create_program_from_binary(src)
 
@@ -1198,7 +1197,7 @@ class Program(CL):
             self.build_logs.append(cl.ffi.string(log).decode("utf-8",
                                                              "replace"))
 
-    def _create_program_from_source(self):
+    def _create_program_from_source(self, create_debugger=False):
         err = cl.ffi.new("cl_int *")
         srcptr = cl.ffi.new("char[]", self.source)
         strings = cl.ffi.new("char*[]", 1)
@@ -1222,8 +1221,9 @@ class Program(CL):
         device_list = cl.ffi.new("cl_device_id[]", n_devices)
         for i, dev in enumerate(self.devices):
             device_list[i] = dev.handle
+        callback = cl.build_callback if create_debugger else cl.ffi.NULL
         err = self._lib.clBuildProgram(self.handle, n_devices, device_list,
-                                       options, cl.ffi.NULL, cl.ffi.NULL)
+                                       options, callback, cl.ffi.NULL)
         del options
         self._get_build_logs(device_list)
         if err:
@@ -1419,7 +1419,7 @@ class Context(CL):
                  (weakrefs do not help here).
     """
 
-    def __init__(self, platform, devices):
+    def __init__(self, platform, devices, create_debugger=False):
         super(Context, self).__init__()
         self._n_refs = 1
         self._platform = platform
@@ -1431,10 +1431,11 @@ class Context(CL):
         err = cl.ffi.new("cl_int *")
         n_devices = len(devices)
         device_list = cl.ffi.new("cl_device_id[]", n_devices)
+        callback = cl.runtime_callback if create_debugger else cl.ffi.NULL
         for i, dev in enumerate(devices):
             device_list[i] = dev.handle
         self._handle = self._lib.clCreateContext(
-            props, n_devices, device_list, cl.ffi.NULL, cl.ffi.NULL, err)
+            props, n_devices, device_list, callback, cl.ffi.NULL, err)
         if err[0]:
             self._handle = None
             raise CLRuntimeError("clCreateContext() failed with error %s" %
@@ -1492,7 +1493,7 @@ class Context(CL):
         return Buffer(self, flags, host_array, size)
 
     def create_program(self, src, include_dirs=(), options="", devices=None,
-                       binary=False):
+                       binary=False, create_debugger=False):
         """Creates and builds OpenCL program from source
            for the supplied devices associated with this context.
 
@@ -1502,11 +1503,14 @@ class Context(CL):
             options: additional build options.
             devices: list of devices on which to build the program
                      (if None will build on all devices).
+            binary: source type flag.
+            create_debugger: bool flag for build debugger creation.
+
         Returns:
             Program object.
         """
         return Program(self, self.devices if devices is None else devices,
-                       src, include_dirs, options, binary)
+                       src, include_dirs, options, binary, create_debugger)
 
     def create_pipe(self, flags, packet_size, max_packets):
         """Creates OpenCL 2.0 pipe.
@@ -2000,16 +2004,17 @@ class Platform(CL):
     def __iter__(self):
         return iter(self.devices)
 
-    def create_context(self, devices):
+    def create_context(self, devices, create_debugger):
         """Creates OpenCL context on this platform and selected devices.
 
         Parameters:
             devices: list of Device objects.
+            create_debugger: bool flag for runtime debugger creation
 
         Returns:
             Context object.
         """
-        return Context(self, devices)
+        return Context(self, devices, create_debugger)
 
     def __repr__(self):
         return '<opencl4py.Platform %r>' % self.name
@@ -2055,8 +2060,11 @@ class Platforms(CL):
                     device.memalign, device.version_string.strip()))
         return "\n".join(lines)
 
-    def create_some_context(self):
+    def create_some_context(self, platform_describe=None, create_debugger=False):
         """Returns Context object with some OpenCL platform, devices attached.
+
+        If variable platform_describe in not None, cover PYOPENCL_CTX
+        (uses format described below)
 
         If environment variable PYOPENCL_CTX is set and not empty,
         gets context based on it, format is:
@@ -2071,9 +2079,11 @@ class Platforms(CL):
         Else chooses first platform and device.
         """
         if len(self.platforms) == 1 and len(self.platforms[0].devices) == 1:
-            return self.platforms[0].create_context(self.platforms[0].devices)
+            return self.platforms[0].create_context(self.platforms[0].devices,
+                                                    create_debugger)
         import os
-        ctx = os.environ.get("PYOPENCL_CTX")
+        ctx = platform_describe if platform_describe is not None\
+            else os.environ.get("PYOPENCL_CTX")
         if ctx is None or not len(ctx):
             if os.isatty(0):
                 import sys
@@ -2116,4 +2126,4 @@ class Platforms(CL):
                 devices.append(platform.devices[i])
         except IndexError:
             raise IndexError("Devicve index is out of range")
-        return platform.create_context(devices)
+        return platform.create_context(devices, create_debugger)
