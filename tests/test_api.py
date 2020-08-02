@@ -377,6 +377,7 @@ class Test(unittest.TestCase):
         queue.unmap_buffer(a_, ptr).wait()
         self.assertLess(numpy.fabs(a - d).max(), 0.0001,
                         "Incorrect result after map_buffer")
+        print("s")
 
     def test_api_nonumpy(self):
         import math

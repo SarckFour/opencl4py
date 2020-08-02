@@ -38,7 +38,7 @@ OpenCL cffi bindings.
 
 import cffi
 import threading
-#don't trust IDE
+
 from purecl.common.const import *
 
 ffi = None
@@ -56,42 +56,14 @@ def _initialize(backends):
     if lib is not None:
         return
     # C function definitions
-    import src.purecl.common.src_reader as rd
+
+    import purecl.common.src_reader as rd
     src = rd.read("ocl_api.c")
 
     # Parse
     global ffi
     ffi = cffi.FFI()
     ffi.cdef(src)
-
-    @ffi.callback("void*(cl_event, cl_int, void*)")
-    def global_event_callback(event, status, data):
-        import purecl._py as seed
-        ev_obj = seed.Event.wait_callbacks.pop(event.__hash__())
-        ev_obj.callback((event, status, data, ffi, lib))
-        return event
-
-    @ffi.callback("void*(cl_program, void*)")
-    def global_build_callback(program, data):
-        raise Exception("OpenCL BUILD ERROR:\n Program:\n%s\n\nData:\n%s" % (program, data))
-
-    @ffi.callback("void*(const char*, const void*, size_t, void*)")
-    def global_runtime_callback(errinfo, pricate_info, cb, data):
-        raise Exception("OpenCL RUNTIME ERROR:\n "
-                        "errinfo:\n%s\n"
-                        "pricate_info:\n%s\n"
-                        "CB: %s\n"
-                        "Data: %s"
-                        % (errinfo, pricate_info, cb, data))
-
-    global event_callback
-    event_callback = global_event_callback
-
-    global build_callback
-    build_callback = global_build_callback
-
-    global runtime_callback
-    runtime_callback = global_runtime_callback
 
     # Load library
     for libnme in backends:

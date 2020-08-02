@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: purecl
-Version: 0.2
+Version: 0.3
 Summary: OpenCL cffi bindings, based on opencl4py library
 Home-page: https://github.com/SarckFour/purecl
 Author: Samsung Electronics Co.,Ltd., Andrey Ivanko
@@ -15,5 +15,5 @@ Classifier: Environment :: Console
 Classifier: Intended Audience :: Developers
 Classifier: License :: OSI Approved :: BSD License
 Classifier: Operating System :: POSIX
-Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
 Classifier: Topic :: Software Development :: Libraries
